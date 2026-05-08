@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "method": "Decision Tree induction (CART, depth=4, min_leaf=80)",
+    "target": "T2DM (1=diabetic, 0=non-diabetic)",
+    "features_used": [
+      "Age",
+      "BMI",
+      "HbA1c",
+      "FPG",
+      "PP2H",
+      "RBS",
+      "HTN",
+      "Obesity",
+      "PolyuriaPolydipsia",
+      "WeightLoss",
+      "Fatigue",
+      "Paresthesia"
+    ],
+    "n_train": 9153,
+    "n_test": 3051,
+    "train_accuracy": 0.8775264940456681,
+    "test_accuracy": 0.880039331366765
+  },
+  "tree_text": "|--- Obesity <= 0.50\n|   |--- Age <= 53.50\n|   |   |--- FPG <= 130.50\n|   |   |   |--- HbA1c <= 7.59\n|   |   |   |   |--- class: 0\n|   |   |   |--- HbA1c >  7.59\n|   |   |   |   |--- class: 0\n|   |   |--- FPG >  130.50\n|   |   |   |--- Age <= 35.50\n|   |   |   |   |--- class: 0\n|   |   |   |--- Age >  35.50\n|   |   |   |   |--- class: 1\n|   |--- Age >  53.50\n|   |   |--- HbA1c <= 7.51\n|   |   |   |--- HbA1c <= 7.46\n|   |   |   |   |--- class: 1\n|   |   |   |--- HbA1c >  7.46\n|   |   |   |   |--- class: 0\n|   |   |--- HbA1c >  7.51\n|   |   |   |--- BMI <= 36.65\n|   |   |   |   |--- class: 1\n|   |   |   |--- BMI >  36.65\n|   |   |   |   |--- class: 1\n|--- Obesity >  0.50\n|   |--- Age <= 36.50\n|   |   |--- class: 1\n|   |--- Age >  36.50\n|   |   |--- Age <= 41.50\n|   |   |   |--- class: 1\n|   |   |--- Age >  41.50\n|   |   |   |--- Age <= 50.50\n|   |   |   |   |--- class: 1\n|   |   |   |--- Age >  50.50\n|   |   |   |   |--- class: 1\n",
+  "feature_importances": {
+    "Age": 0.26171112571482597,
+    "BMI": 6.71972176747239e-05,
+    "HbA1c": 0.12613915304100382,
+    "FPG": 0.059849119717442986,
+    "PP2H": 0.0,
+    "RBS": 0.0,
+    "HTN": 0.0,
+    "Obesity": 0.5522334043090525,
+    "PolyuriaPolydipsia": 0.0,
+    "WeightLoss": 0.0,
+    "Fatigue": 0.0,
+    "Paresthesia": 0.0
+  }
+}

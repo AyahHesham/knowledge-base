@@ -1,0 +1,142 @@
+{
+  "metadata": {
+    "name": "Diab-KBS Frame Hierarchy",
+    "representation": "Object-oriented frames with slots, facets, defaults and inheritance (Lecture 4)"
+  },
+
+  "frames": {
+
+    "MedicalEntity": {
+      "type": "abstract",
+      "slots": {
+        "name": { "type": "string" },
+        "category": { "type": "string" }
+      }
+    },
+
+    "Person": {
+      "is_a": "MedicalEntity",
+      "slots": {
+        "id":      { "type": "integer" },
+        "age":     { "type": "integer", "min": 0, "max": 120 },
+        "gender":  { "type": "enum", "values": ["male", "female"] },
+        "address": { "type": "string", "default": "Unknown" }
+      }
+    },
+
+    "Patient": {
+      "is_a": "Person",
+      "slots": {
+        "weight":        { "type": "float", "unit": "kg" },
+        "height":        { "type": "float", "unit": "m" },
+        "bmi":           { "type": "float", "computed_from": "weight / (height^2)" },
+        "symptoms":      { "type": "list[Symptom]", "default": [] },
+        "labs":          { "type": "list[LabResult]", "default": [] },
+        "diagnoses":     { "type": "list[Disease]",  "default": [] },
+        "comorbidities": { "type": "list[Disease]",  "default": [] },
+        "treatments":    { "type": "list[Treatment]", "default": [] },
+        "risk_factors":  { "type": "list[RiskFactor]", "default": [] }
+      },
+      "methods": ["evaluate_diagnosis", "compute_risk_score", "generate_report"]
+    },
+
+    "Disease": {
+      "is_a": "MedicalEntity",
+      "slots": {
+        "icd10":        { "type": "string" },
+        "severity":     { "type": "enum", "values": ["mild", "moderate", "severe"] },
+        "chronic":      { "type": "boolean", "default": true },
+        "complications":{ "type": "list[Complication]", "default": [] }
+      }
+    },
+
+    "DiabetesMellitus": {
+      "is_a": "Disease",
+      "slots": {
+        "name":     { "default": "Diabetes Mellitus" },
+        "category": { "default": "Endocrine" },
+        "icd10":    { "default": "E10-E14" },
+        "chronic":  { "default": true }
+      }
+    },
+
+    "Type1Diabetes": {
+      "is_a": "DiabetesMellitus",
+      "slots": {
+        "name":            { "default": "Type 1 Diabetes Mellitus" },
+        "icd10":           { "default": "E10" },
+        "typical_onset_age": { "default": "<30 years" },
+        "etiology":        { "default": "Autoimmune β-cell destruction" },
+        "treatment":       { "default": "Insulin (multiple daily injections or pump)" }
+      }
+    },
+
+    "Type2Diabetes": {
+      "is_a": "DiabetesMellitus",
+      "slots": {
+        "name":            { "default": "Type 2 Diabetes Mellitus" },
+        "icd10":           { "default": "E11" },
+        "typical_onset_age": { "default": ">=30 years" },
+        "etiology":        { "default": "Insulin resistance + β-cell dysfunction" },
+        "treatment":       { "default": "Lifestyle + Metformin first-line" }
+      }
+    },
+
+    "LADA": {
+      "is_a": "DiabetesMellitus",
+      "slots": {
+        "name":  { "default": "Latent Autoimmune Diabetes in Adults" },
+        "icd10": { "default": "E13" },
+        "etiology": { "default": "Slow autoimmune β-cell destruction in adults" }
+      }
+    },
+
+    "Symptom": {
+      "is_a": "MedicalEntity",
+      "slots": {
+        "name":     { "type": "string" },
+        "severity": { "type": "enum", "values": ["none","mild","moderate","severe"], "default": "none" },
+        "duration_days": { "type": "integer", "default": 0 }
+      }
+    },
+
+    "LabResult": {
+      "is_a": "MedicalEntity",
+      "slots": {
+        "test_name":   { "type": "string" },
+        "value":       { "type": "float" },
+        "unit":        { "type": "string" },
+        "reference_low":  { "type": "float" },
+        "reference_high": { "type": "float" },
+        "interpretation": { "type": "enum", "values": ["low","normal","borderline","high","critical"] }
+      }
+    },
+
+    "Treatment": {
+      "is_a": "MedicalEntity",
+      "slots": {
+        "name":      { "type": "string" },
+        "drug_class":{ "type": "string" },
+        "dose":      { "type": "string" },
+        "evidence_level": { "type": "enum", "values": ["A","B","C","Expert"] }
+      }
+    },
+
+    "RiskFactor": {
+      "is_a": "MedicalEntity",
+      "slots": {
+        "name":     { "type": "string" },
+        "weight":   { "type": "float", "min": 0, "max": 1 },
+        "modifiable": { "type": "boolean", "default": true }
+      }
+    },
+
+    "Complication": {
+      "is_a": "Disease",
+      "slots": {
+        "linked_disease": { "type": "string" },
+        "screening_test": { "type": "string" }
+      }
+    }
+  }
+}

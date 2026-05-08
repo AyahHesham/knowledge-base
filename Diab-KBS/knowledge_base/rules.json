@@ -1,0 +1,179 @@
+{
+  "metadata": {
+    "name": "Diab-KBS Production Rules",
+    "version": "1.0",
+    "author": "Diab-KBS Knowledge Engineering Team",
+    "domain": "Diabetes Mellitus, Endocrine & Metabolic Diagnosis",
+    "knowledge_sources": [
+      "American Diabetes Association (ADA) Standards of Medical Care 2024",
+      "WHO Diagnostic Criteria for Diabetes Mellitus",
+      "Egyptian Diabetes Society Clinical Guidelines",
+      "Dr. Hossam diabetes dataset (12,204 patients) — empirical rule mining"
+    ],
+    "representation": "IF-THEN production rules with Certainty Factors (CF) ∈ [-1, +1]"
+  },
+
+  "rules": [
+
+    { "id": "R01", "category": "Diagnosis - T2DM",
+      "if":   { "all": ["HbA1c_cat == 'diabetes_range'", "Age >= 30"] },
+      "then": { "fact": "diagnosis", "value": "Type 2 Diabetes Mellitus", "cf": 0.95 },
+      "explanation": "ADA criterion: HbA1c ≥ 6.5% in an adult ≥30 yr is diagnostic of T2DM." },
+
+    { "id": "R02", "category": "Diagnosis - T2DM",
+      "if":   { "all": ["FPG_cat == 'diabetes_range'", "PP_cat == 'diabetes_range'"] },
+      "then": { "fact": "diagnosis", "value": "Type 2 Diabetes Mellitus", "cf": 0.92 },
+      "explanation": "Two abnormal glucose readings (FPG ≥126 and 2-h PP ≥200) confirm diabetes (ADA)." },
+
+    { "id": "R03", "category": "Diagnosis - T2DM",
+      "if":   { "all": ["RBS >= 200", "PolyuriaPolydipsia == 1"] },
+      "then": { "fact": "diagnosis", "value": "Type 2 Diabetes Mellitus", "cf": 0.88 },
+      "explanation": "Random glucose ≥200 mg/dL plus classic hyperglycaemic symptoms is diagnostic (ADA)." },
+
+    { "id": "R04", "category": "Diagnosis - T1DM",
+      "if":   { "all": ["HbA1c_cat == 'diabetes_range'", "Age < 30", "WeightLoss == 1"] },
+      "then": { "fact": "diagnosis", "value": "Type 1 Diabetes Mellitus", "cf": 0.85 },
+      "explanation": "Young patient (<30) with hyperglycaemia and unintentional weight loss suggests T1DM." },
+
+    { "id": "R05", "category": "Diagnosis - LADA",
+      "if":   { "all": ["HbA1c_cat == 'diabetes_range'", "Age >= 30", "Age < 50", "WeightLoss == 1", "BMI < 27"] },
+      "then": { "fact": "diagnosis", "value": "Latent Autoimmune Diabetes in Adults (LADA)", "cf": 0.70 },
+      "explanation": "Adult-onset diabetes in a non-obese patient with weight loss is suggestive of LADA." },
+
+    { "id": "R06", "category": "Diagnosis - Prediabetes",
+      "if":   { "any": ["HbA1c_cat == 'prediabetes'", "FPG_cat == 'impaired_fasting'", "PP_cat == 'impaired_glucose_tolerance'"] },
+      "then": { "fact": "diagnosis", "value": "Prediabetes", "cf": 0.85 },
+      "explanation": "HbA1c 5.7-6.4%, FPG 100-125 or 2-h PP 140-199 fall in the prediabetes range (ADA)." },
+
+    { "id": "R07", "category": "Diagnosis - Hypothyroidism",
+      "if":   { "all": ["TSH_cat == 'high'", "Fatigue == 1"] },
+      "then": { "fact": "diagnosis", "value": "Primary Hypothyroidism", "cf": 0.85 },
+      "explanation": "Elevated TSH with fatigue strongly suggests primary hypothyroidism." },
+
+    { "id": "R08", "category": "Diagnosis - Hyperthyroidism",
+      "if":   { "all": ["TSH_cat == 'low'", "WeightLoss == 1"] },
+      "then": { "fact": "diagnosis", "value": "Primary Hyperthyroidism", "cf": 0.80 },
+      "explanation": "Suppressed TSH with weight loss is consistent with hyperthyroidism." },
+
+    { "id": "R09", "category": "Risk Factor",
+      "if":   { "all": ["BMI_cat == 'obese_I' OR BMI_cat == 'obese_II' OR BMI_cat == 'obese_III'"] },
+      "then": { "fact": "risk_factor", "value": "Obesity (high diabetes risk)", "cf": 0.90 },
+      "explanation": "BMI ≥30 is an established risk factor for T2DM." },
+
+    { "id": "R10", "category": "Risk Factor",
+      "if":   { "all": ["HTN == 1"] },
+      "then": { "fact": "risk_factor", "value": "Hypertension (cardiovascular & renal risk)", "cf": 0.85 },
+      "explanation": "HTN doubles cardiovascular risk in diabetics." },
+
+    { "id": "R11", "category": "Complication Risk",
+      "if":   { "all": ["diagnosis == 'Type 2 Diabetes Mellitus'", "HbA1c >= 9"] },
+      "then": { "fact": "complication_risk", "value": "Uncontrolled diabetes — high complication risk", "cf": 0.92 },
+      "explanation": "HbA1c ≥9% indicates poor glycaemic control with high risk of micro/macrovascular complications." },
+
+    { "id": "R12", "category": "Complication Risk",
+      "if":   { "all": ["diagnosis == 'Type 2 Diabetes Mellitus'", "Paresthesia == 1"] },
+      "then": { "fact": "complication_risk", "value": "Diabetic Peripheral Neuropathy (likely)", "cf": 0.80 },
+      "explanation": "Tingling/numbness in a diabetic patient is highly suggestive of peripheral neuropathy." },
+
+    { "id": "R13", "category": "Complication Risk",
+      "if":   { "all": ["diagnosis == 'Type 2 Diabetes Mellitus'", "BlurredVision == 1"] },
+      "then": { "fact": "complication_risk", "value": "Diabetic Retinopathy (screen with fundoscopy)", "cf": 0.75 },
+      "explanation": "Blurred vision in a diabetic warrants a dilated-eye examination." },
+
+    { "id": "R14", "category": "Complication Risk",
+      "if":   { "all": ["diagnosis == 'Type 2 Diabetes Mellitus'", "Creatinine >= 1.4"] },
+      "then": { "fact": "complication_risk", "value": "Diabetic Nephropathy (impaired renal function)", "cf": 0.85 },
+      "explanation": "Elevated serum creatinine in a diabetic suggests evolving nephropathy." },
+
+    { "id": "R15", "category": "Complication Risk",
+      "if":   { "all": ["diagnosis == 'Type 2 Diabetes Mellitus'", "DelayedHealing == 1"] },
+      "then": { "fact": "complication_risk", "value": "Diabetic Foot Risk", "cf": 0.78 },
+      "explanation": "Delayed wound healing plus diabetes raises diabetic-foot risk; perform foot exam." },
+
+    { "id": "R16", "category": "Treatment",
+      "if":   { "all": ["diagnosis == 'Type 2 Diabetes Mellitus'", "HbA1c < 7.5"] },
+      "then": { "fact": "recommended_treatment", "value": "First-line: lifestyle modification + Metformin 500-1000 mg BID", "cf": 0.90 },
+      "explanation": "ADA: Metformin is first-line in T2DM with HbA1c <7.5%." },
+
+    { "id": "R17", "category": "Treatment",
+      "if":   { "all": ["diagnosis == 'Type 2 Diabetes Mellitus'", "HbA1c >= 7.5", "HbA1c < 9"] },
+      "then": { "fact": "recommended_treatment", "value": "Dual therapy: Metformin + (SGLT2-i / GLP-1 RA / DPP4-i)", "cf": 0.85 },
+      "explanation": "Moderate hyperglycaemia warrants dual oral therapy (ADA Section 9)." },
+
+    { "id": "R18", "category": "Treatment",
+      "if":   { "all": ["diagnosis == 'Type 2 Diabetes Mellitus'", "HbA1c >= 9"] },
+      "then": { "fact": "recommended_treatment", "value": "Initiate basal insulin ± oral agents and refer to endocrinology", "cf": 0.90 },
+      "explanation": "Severe hyperglycaemia: insulin should be considered without delay (ADA)." },
+
+    { "id": "R19", "category": "Treatment",
+      "if":   { "all": ["diagnosis == 'Type 1 Diabetes Mellitus'"] },
+      "then": { "fact": "recommended_treatment", "value": "Multiple Daily Insulin (basal + bolus) and CGM", "cf": 0.95 },
+      "explanation": "T1DM is insulin-dependent; MDI or pump therapy is mandatory (ADA)." },
+
+    { "id": "R20", "category": "Treatment",
+      "if":   { "all": ["diagnosis == 'Prediabetes'"] },
+      "then": { "fact": "recommended_treatment", "value": "Intensive lifestyle programme: 7% weight loss + 150 min/wk exercise; consider Metformin if BMI >35", "cf": 0.88 },
+      "explanation": "DPP trial: lifestyle reduces conversion to T2DM by 58%." },
+
+    { "id": "R21", "category": "Treatment",
+      "if":   { "all": ["diagnosis == 'Primary Hypothyroidism'"] },
+      "then": { "fact": "recommended_treatment", "value": "Levothyroxine 1.6 µg/kg/day; recheck TSH in 6-8 wk", "cf": 0.90 },
+      "explanation": "Standard replacement dose for primary hypothyroidism." },
+
+    { "id": "R22", "category": "Risk Factor",
+      "if":   { "all": ["Age >= 45", "BMI >= 25"] },
+      "then": { "fact": "risk_factor", "value": "Recommend diabetes screening (age & BMI)", "cf": 0.80 },
+      "explanation": "ADA: screen for prediabetes/T2DM in adults ≥45 yr or BMI ≥25." },
+
+    { "id": "R23", "category": "Diagnosis - Metabolic Syndrome",
+      "if":   { "all": ["BMI >= 30", "HTN == 1", "FPG >= 100"] },
+      "then": { "fact": "diagnosis", "value": "Metabolic Syndrome (probable)", "cf": 0.78 },
+      "explanation": "Central obesity + HTN + impaired fasting glucose meets several MetS criteria." },
+
+    { "id": "R24", "category": "Alert",
+      "if":   { "all": ["RBS >= 400"] },
+      "then": { "fact": "alert", "value": "URGENT: very high glucose — rule out DKA / HHS", "cf": 0.95 },
+      "explanation": "Severe hyperglycaemia requires immediate emergency assessment." },
+
+    { "id": "R25", "category": "Alert",
+      "if":   { "all": ["HbA1c >= 12"] },
+      "then": { "fact": "alert", "value": "URGENT: HbA1c critically high — initiate insulin & specialist review", "cf": 0.95 },
+      "explanation": "HbA1c ≥12% indicates extreme chronic hyperglycaemia." },
+
+    { "id": "R26", "category": "Risk Factor",
+      "if":   { "all": ["Age >= 65", "diagnosis == 'Type 2 Diabetes Mellitus'"] },
+      "then": { "fact": "risk_factor", "value": "Elderly diabetic — relax HbA1c target to <8% and avoid hypoglycaemia", "cf": 0.85 },
+      "explanation": "ADA Section 13: older adults benefit from individualised, less stringent targets." },
+
+    { "id": "R27", "category": "Diagnosis - Goitre / SCH",
+      "if":   { "all": ["TSH > 4", "TSH < 10", "Fatigue == 0"] },
+      "then": { "fact": "diagnosis", "value": "Subclinical Hypothyroidism", "cf": 0.75 },
+      "explanation": "Mildly elevated TSH without overt symptoms = subclinical hypothyroidism." },
+
+    { "id": "R28", "category": "Treatment",
+      "if":   { "all": ["risk_factor == 'Obesity (high diabetes risk)'"] },
+      "then": { "fact": "recommended_treatment", "value": "Weight-loss programme: 5–10% body-weight reduction; refer to dietitian", "cf": 0.85 },
+      "explanation": "5-10% weight loss markedly improves glycaemic control and cardiovascular risk." },
+
+    { "id": "R29", "category": "Complication Risk",
+      "if":   { "all": ["diagnosis == 'Type 2 Diabetes Mellitus'", "HTN == 1"] },
+      "then": { "fact": "complication_risk", "value": "Cardiovascular Disease — high risk", "cf": 0.88 },
+      "explanation": "Coexisting diabetes & hypertension multiply CVD risk; start ACEi/ARB." },
+
+    { "id": "R30", "category": "Treatment",
+      "if":   { "all": ["complication_risk == 'Cardiovascular Disease — high risk'"] },
+      "then": { "fact": "recommended_treatment", "value": "Initiate ACE-inhibitor / ARB + Statin (atorvastatin 20-40 mg)", "cf": 0.88 },
+      "explanation": "ADA Section 10: ACEi/ARB + statin reduce CV events in diabetic-hypertensive patients." },
+
+    { "id": "R31", "category": "Diagnosis - Hyperuricaemia",
+      "if":   { "all": ["UricAcid > 7"] },
+      "then": { "fact": "diagnosis", "value": "Hyperuricaemia (gout risk)", "cf": 0.80 },
+      "explanation": "Serum uric acid >7 mg/dL is hyperuricaemia." },
+
+    { "id": "R32", "category": "Risk Factor",
+      "if":   { "all": ["MuscleCramps == 1", "diagnosis == 'Type 2 Diabetes Mellitus'"] },
+      "then": { "fact": "risk_factor", "value": "Possible electrolyte imbalance — check Na/K/Mg", "cf": 0.65 },
+      "explanation": "Diabetics on diuretics/SGLT2-i frequently develop electrolyte disturbances." }
+
+  ]
+}

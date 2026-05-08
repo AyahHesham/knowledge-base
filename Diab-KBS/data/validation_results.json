@@ -1,0 +1,14 @@
+{
+  "n_patients_validated": 4893,
+  "confusion_matrix": {
+    "TP": 2467,
+    "TN": 1515,
+    "FP": 223,
+    "FN": 688
+  },
+  "accuracy": 0.8138,
+  "sensitivity": 0.7819,
+  "specificity": 0.8717,
+  "precision": 0.9171,
+  "f1_score": 0.8441
+}
